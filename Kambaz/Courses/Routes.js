@@ -1,6 +1,7 @@
 import * as dao from "./dao.js";
 import * as modulesDao from "../Modules/dao.js";
 import * as assignmentsDao from "../Assignments/dao.js";
+import * as enrollmentDao from "../Enrollments/dao.js";
 
 
 export default function CourseRoutes(app) {
@@ -15,7 +16,7 @@ export default function CourseRoutes(app) {
             res.status(401).json({ message: "Not logged in" });
             return;
         }
-        const enrolledCourses = dao.findCoursesForEnrolledUser(currentUser._id);
+        const enrolledCourses = enrollmentDao.findCoursesForEnrolledUser(currentUser._id);
         res.json(enrolledCourses);
     });
 
@@ -26,6 +27,7 @@ export default function CourseRoutes(app) {
             return;
         }
         const newCourse = dao.createCourse(req.body);
+
         res.json(newCourse);
     });
 
@@ -99,6 +101,61 @@ export default function CourseRoutes(app) {
         };
         const newAssignment = assignmentsDao.createAssignment(assignment);
         res.json(newAssignment);
+    });
+
+    // app.get("/api/users/current/courses", (req, res) => {
+    //     const currentUser = req.session["currentUser"];
+    //     if (!currentUser) {
+    //         res.status(401).json({ message: "Not logged in" });
+    //         return;
+    //     }
+    //     const enrolledCourses = dao.findCoursesForEnrolledUser(currentUser._id);
+    //     res.json(enrolledCourses);
+    // });
+
+    // ADD THESE MISSING ROUTES:
+
+    // Enroll current user in a course
+    app.post("/api/users/current/courses/:courseId", (req, res) => {
+        const currentUser = req.session["currentUser"];
+        if (!currentUser) {
+            res.status(401).json({ message: "Not logged in" });
+            return;
+        }
+        const { courseId } = req.params;
+        enrollmentDao.enrollUserInCourse(currentUser._id, courseId);
+        res.json({ success: true, message: "Enrolled successfully" });
+    });
+
+    // Unenroll current user from a course (DELETE or PUT)
+    app.delete("/api/users/current/courses/:courseId", (req, res) => {
+        const currentUser = req.session["currentUser"];
+        if (!currentUser) {
+            res.status(401).json({ message: "Not logged in" });
+            return;
+        }
+        const { courseId } = req.params;
+        enrollmentDao.unenrollUserFromCourse(currentUser._id, courseId);
+        res.json({ success: true, message: "Unenrolled successfully" });
+    });
+
+    // If you specifically need PUT for unenrolling:
+    app.put("/api/users/current/courses/:courseId", (req, res) => {
+        const currentUser = req.session["currentUser"];
+        if (!currentUser) {
+            res.status(401).json({ message: "Not logged in" });
+            return;
+        }
+        const { courseId } = req.params;
+
+        // Check if enrolling or unenrolling based on request body
+        if (req.body.action === "unenroll") {
+            enrollmentDao.unenrollUserFromCourse(currentUser._id, courseId);
+            res.json({ success: true, message: "Unenrolled successfully" });
+        } else {
+            enrollmentDao.enrollUserInCourse(currentUser._id, courseId);
+            res.json({ success: true, message: "Enrolled successfully" });
+        }
     });
 
 

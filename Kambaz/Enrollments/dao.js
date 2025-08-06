@@ -2,6 +2,8 @@ import Database from "../Database/index.js";
 import { v4 as uuidv4 } from "uuid";
 
 export function enrollUserInCourse(userId, courseId) {
+
+
     if (!Database.Enrollments) {
         Database.Enrollments = [];
     }
@@ -20,21 +22,18 @@ export function enrollUserInCourse(userId, courseId) {
 }
 
 export function unenrollUserFromCourse(userId, courseId) {
-    console.log("DAO: Unenrolling", userId, "from", courseId);
-
     if (!Database.Enrollments) {
         Database.Enrollments = [];
         return;
     }
 
-    console.log("DAO: Before filter:", Database.Enrollments);
     Database.Enrollments = Database.Enrollments.filter(
         enrollment => !(enrollment.user === userId && enrollment.course === courseId)
     );
-    console.log("DAO: After filter:", Database.Enrollments);
 }
 
 export function findCoursesForEnrolledUser(userId) {
+
     if (!Database.Enrollments) {
         return [];
     }
@@ -42,8 +41,8 @@ export function findCoursesForEnrolledUser(userId) {
     const userEnrollments = Database.Enrollments.filter(
         enrollment => enrollment.user === userId
     );
-
-    return userEnrollments.map(enrollment => enrollment.course);
+    const courseIds = userEnrollments.map(enrollment => enrollment.course);
+    return courseIds;
 }
 
 export function findEnrolledUsersForCourse(courseId) {
