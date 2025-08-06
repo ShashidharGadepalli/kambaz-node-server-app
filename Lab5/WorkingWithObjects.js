@@ -35,6 +35,9 @@ export default function WorkingWithObjects(app) {
         module.name = newName;
         res.json(module);
     });
+    app.get("/lab5/assignment/score", (req, res) => {
+        res.json(assignment.score);
+    });
 
     app.get("/lab5/assignment/score/:newScore", (req, res) => {
         const { newScore } = req.params;
