@@ -282,7 +282,7 @@ export default [
     {
         "_id": "iron_man",
         "username": "iron_man",
-        "password": "iron_man",
+        "password": "stark123",
         "firstName": "Tony",
         "lastName": "Stark",
         "email": "tony.stark@starkindustries.com",

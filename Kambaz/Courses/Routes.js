@@ -2,13 +2,11 @@ import * as dao from "./dao.js";
 import * as modulesDao from "../Modules/dao.js";
 
 export default function CourseRoutes(app) {
-    // GET all courses
     app.get("/api/courses", (req, res) => {
         const courses = dao.findAllCourses();
         res.send(courses);
     });
 
-    // GET enrolled courses for current user
     app.get("/api/users/current/courses", (req, res) => {
         const currentUser = req.session["currentUser"];
         if (!currentUser) {
@@ -19,7 +17,6 @@ export default function CourseRoutes(app) {
         res.json(enrolledCourses);
     });
 
-    // CREATE new course
     app.post("/api/courses", (req, res) => {
         const currentUser = req.session["currentUser"];
         if (!currentUser || currentUser.role !== "FACULTY") {
@@ -30,7 +27,6 @@ export default function CourseRoutes(app) {
         res.json(newCourse);
     });
 
-    // UPDATE course
     app.put("/api/courses/:courseId", (req, res) => {
         const currentUser = req.session["currentUser"];
         if (!currentUser || currentUser.role !== "FACULTY") {
@@ -46,7 +42,6 @@ export default function CourseRoutes(app) {
         }
     });
 
-    // DELETE course
     app.delete("/api/courses/:courseId", (req, res) => {
         const currentUser = req.session["currentUser"];
 
@@ -62,7 +57,6 @@ export default function CourseRoutes(app) {
     });
 
 
-    // GET course by ID
     app.get("/api/courses/:courseId", (req, res) => {
         const { courseId } = req.params;
         const course = dao.findCourseById(courseId);
